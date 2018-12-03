@@ -5,6 +5,7 @@ import { inputs } from './inputs';
 export const part1 = reduce((total, value) => total + value, 0);
 
 export const part2 = values => {
+  debugger;
   const frequencies = [];
   let frequency = 0;
   let dupe;
@@ -25,5 +26,5 @@ export const part2 = values => {
   return dupe;
 }
 
-export const answer1_1 = part1(inputs);
-export const answer1_2 = part2(inputs);
+exports.getPart1 = () => part1(inputs);
+exports.getPart2 = () => part2(inputs);
