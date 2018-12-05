@@ -7,12 +7,12 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch Program",
-      "program": "${workspaceFolder}/2018/index.js",
-      "runtimeExecutable": "npm",
-    "runtimeArgs": [
+      "name": "Run Server",
+      "cwd": "${workspaceFolder}/2018",
+      "runtimeExecutable": "/usr/local/bin/npm",
+      "runtimeArgs": [
         "run-script", "start"
-    ],
+      ],
     }
   ]
 }
