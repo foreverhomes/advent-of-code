@@ -1,10 +1,9 @@
 import { values } from 'lodash';
 import { squaresInput } from './squares-input';
 
-function getOverlap(input = squaresInput) {
+function getSquares(input = squaresInput) {
   const lines = input.split('\n');
   const squares = [];
-  let xMax = 0, yMax = 0;
   lines.forEach(line => {
     const [ id, _, position, size ] = line.split(' ');
     const [x, y] = position.split(',');
@@ -16,34 +15,70 @@ function getOverlap(input = squaresInput) {
       h: parseInt(h, 10),
       id: id.replace(/\#/g, ''),
     };
-    xMax = Math.max(xMax, square.x + square.w);
-    yMax = Math.max(yMax, square.y + square.h);
     squares.push(square);
   });
 
-  const points = {};
+  return squares;
+};
 
+function getPlot(squares = []) {
+  const plot = {};
   squares.forEach(square => {
     for (let i = square.x + 1; i <= square.x + square.w; i++) {
       for (let j = square.y + 1; j <= square.y + square.h; j++) {
         const point = `${i}.${j}`;
-        if (points[point]) {
-          points[point] = points[point] + 1;
+        if (plot[point]) {
+          plot[point] = plot[point] + 1;
         } else {
-          points[point] = 1;
+          plot[point] = 1;
         }
       }
     }
   });
 
-  return values(points).filter(value => value > 1).length;
-};
+  return plot;
+}
 
-console.assert(getOverlap(`#1 @ 1,3: 4x4
+function getTotalOverlap(plot = {}) {
+  return values(plot).filter(value => value > 1).length
+}
+
+function getIntactSquareId(squares, plot) {
+  let id;
+  squares.forEach(square => {
+    let isIntact = true;
+    for (let i = square.x + 1; i <= square.x + square.w; i++) {
+      for (let j = square.y + 1; j <= square.y + square.h; j++) {
+        const point = plot[`${i}.${j}`];
+        if (point > 1) {
+          isIntact = false;
+        }
+      }
+    }
+
+    if (isIntact) {
+      id = square.id;
+    }
+  });
+
+  return id;
+}
+
+const testData = `#1 @ 1,3: 4x4
 #2 @ 3,1: 4x4
-#3 @ 5,5: 2x2`) === 4);
+#3 @ 5,5: 2x2`;
+const testSquares = getSquares(testData);
+const testPlot = getPlot(testSquares);
+const testOverlap = getTotalOverlap(testPlot);
+const testIntactSquareId = getIntactSquareId(testSquares, testPlot);
+console.assert(testOverlap === 4);
+console.assert(testIntactSquareId === '3');
 
-exports.getPart1 = () => {
-  debugger;
-  return getOverlap()
+exports.getAnswers = () => {
+  const squares = getSquares();
+  const plot = getPlot(squares);
+  return {
+    totalOverlap: getTotalOverlap(plot),
+    intactSquareId: getIntactSquareId(squares, plot),
+  };
 };

@@ -21,8 +21,8 @@ app.get('/day2', function (req, res) {
 });
 
 app.get('/day3', function (req, res) {
-  var answer1 = day3.getPart1();
-  res.send('Part 1: ' + answer1);
+  var answers = day3.getAnswers();
+  res.send('Part 1: ' + answers.totalOverlap + ', Part 2: ' + answers.intactSquareId);
 });
 
 app.listen(port, function () {

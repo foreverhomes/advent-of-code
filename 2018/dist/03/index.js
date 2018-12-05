@@ -6,7 +6,7 @@ var _lodash = require('lodash');
 
 var _squaresInput = require('./squares-input');
 
-function getOverlap() {
+function getSquares() {
   var input = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _squaresInput.squaresInput;
 
   var lines = input.split('\n');
@@ -43,32 +43,72 @@ function getOverlap() {
     squares.push(square);
   });
 
-  var points = {};
+  return squares;
+};
 
+function getPlot(squares) {
+  var plot = {};
   squares.forEach(function (square) {
     for (var i = square.x + 1; i <= square.x + square.w; i++) {
       for (var j = square.y + 1; j <= square.y + square.h; j++) {
         var point = i + '.' + j;
-        if (points[point]) {
-          points[point] = points[point] + 1;
+        if (plot[point]) {
+          plot[point] = plot[point] + 1;
         } else {
-          points[point] = 1;
+          plot[point] = 1;
         }
       }
     }
   });
 
-  var total = (0, _lodash.values)(points).filter(function (value) {
+  return plot;
+}
+
+function getTotalOverlap() {
+  var plot = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+  return (0, _lodash.values)(plot).filter(function (value) {
     return value > 1;
   }).length;
-  debugger;
+}
 
-  return total;
-};
+function getIntactSquareId(squares, plot) {
+  var id = void 0;
+  squares.forEach(function (square) {
+    var isIntact = true;
+    for (var i = square.x + 1; i <= square.x + square.w; i++) {
+      for (var j = square.y + 1; j <= square.y + square.h; j++) {
+        var point = plot[i + '.' + j];
+        if (point > 1) {
+          isIntact = false;
+        }
+      }
+    }
 
-console.assert(getOverlap('#1 @ 1,3: 4x4\n#2 @ 3,1: 4x4\n#3 @ 5,5: 2x2') === 4);
+    if (isIntact) {
+      console.warn('found', square.id);
+      id = square.id;
+    }
+  });
 
-exports.getPart1 = function () {
-  debugger;
-  return getOverlap();
+  return id;
+}
+
+var testData = '#1 @ 1,3: 4x4\n#2 @ 3,1: 4x4\n#3 @ 5,5: 2x2';
+var testSquares = getSquares(testData);
+var testPlot = getPlot(testSquares);
+var testOverlap = getTotalOverlap(testPlot);
+console.warn(testOverlap);
+console.assert(testOverlap === 4);
+var testIntactSquareId = getIntactSquareId(testSquares, testPlot);
+console.warn(testIntactSquareId);
+console.assert(testIntactSquareId === '3');
+
+exports.getAnswers = function () {
+  var squares = getSquares();
+  var plot = getPlot(squares);
+  return {
+    totalOverlap: getTotalOverlap(plot),
+    intactSquareId: getIntactSquareId(squares, plot)
+  };
 };

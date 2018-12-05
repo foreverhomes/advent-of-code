@@ -19,8 +19,8 @@ app.get('/day2', (req, res) => {
 })
 
 app.get('/day3', (req, res) => {
-  const answer1 = day3.getPart1();
-  res.send(`Part 1: ${answer1}`);
+  const answers = day3.getAnswers();
+  res.send(`Part 1: ${answers.totalOverlap}, Part 2: ${answers.intactSquareId}`);
 })
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
